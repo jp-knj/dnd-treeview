@@ -1,34 +1,59 @@
 import React, { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { getBackendOptions, MultiBackend } from '@minoru/react-dnd-treeview'
+import { Tree } from './Tree'
+import { DndProvider } from 'react-dnd'
 
-function App() {
-    const [count, setCount] = useState(0)
+export function App() {
+    const [treeData, setTreeData] = useState(initialData)
+    const handleDrop = (newTreeData: any) => setTreeData(newTreeData)
 
     return (
-        <div className="App">
-            <div>
-                <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-                    <img src="/vite.svg" className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://reactjs.org" target="_blank" rel="noreferrer">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-                </button>
-                <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
-            </div>
-            <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-            </p>
-        </div>
+        <DndProvider backend={MultiBackend} options={getBackendOptions()}>
+            <Tree
+                tree={treeData}
+                rootId={0}
+                onDrop={handleDrop}
+                // @ts-ignore
+                render={(node, { depth, isOpen, onToggle }) => (
+                    <div style={{ marginLeft: depth * 10 }}>
+                        {node.droppable && (
+                            <span onClick={onToggle}>{isOpen ? '[-]' : '[+]'}</span>
+                        )}
+                        {node.text}
+                    </div>
+                )}
+            />
+        </DndProvider>
     )
 }
 
-export default App
+const initialData = [
+    { id: 1, parent: 0, droppable: true, text: 'Folder 1' },
+    {
+        id: 2,
+        parent: 1,
+        text: 'File 1-1',
+    },
+    {
+        id: 3,
+        parent: 1,
+        text: 'File 1-2',
+    },
+    {
+        id: 4,
+        parent: 0,
+        droppable: true,
+        text: 'Folder 2',
+    },
+    {
+        id: 5,
+        parent: 4,
+        droppable: true,
+        text: 'Folder 2-1',
+    },
+    {
+        id: 6,
+        parent: 5,
+        text: 'File 2-1-1',
+    },
+]
