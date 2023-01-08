@@ -1,7 +1,7 @@
-import { DropTargetMonitor } from 'react-dnd'
-import { DragItem } from './Tree'
-import { isDroppable } from './isDroppable'
-import { NodeModel, TreeState } from './Provider'
+import { DropTargetMonitor } from 'react-dnd';
+import { DragItem } from './Tree';
+import { isDroppable } from './isDroppable';
+import { NodeModel, TreeState } from './Provider';
 
 type CompareResult = 'up' | 'down';
 
@@ -26,140 +26,140 @@ type GetOuterIndex = (
 ) => number | null;
 
 const compareYCoord: CompareYCoord = (el, pointerY) => {
-    const bbox = el.getBoundingClientRect()
-    const centerY = bbox.top + bbox.height / 2
-    return pointerY > centerY ? 'down' : 'up'
-}
+  const bbox = el.getBoundingClientRect();
+  const centerY = bbox.top + bbox.height / 2;
+  return pointerY > centerY ? 'down' : 'up';
+};
 
 const getInnerIndex: GetInnerIndex = (listItems, monitor) => {
-    let pos = ''
-    let index = 0
+  let pos = '';
+  let index = 0;
 
-    listItems.forEach((el, key) => {
-        const flag = compareYCoord(el, monitor.getClientOffset()?.y || 0)
+  listItems.forEach((el, key) => {
+    const flag = compareYCoord(el, monitor.getClientOffset()?.y || 0);
 
-        if (pos === '') {
-            pos = flag
-        } else if (pos !== flag) {
-            pos = flag
-            index = key
-        }
+    if (pos === '') {
+      pos = flag;
+    } else if (pos !== flag) {
+      pos = flag;
+      index = key;
+    }
 
-        if (key === listItems.length - 1 && flag === 'down') {
-            index = key + 1
-        }
-    })
+    if (key === listItems.length - 1 && flag === 'down') {
+      index = key + 1;
+    }
+  });
 
-    return index
-}
+  return index;
+};
 
 const getOuterIndex: GetOuterIndex = (node, nodeEl, monitor) => {
-    const parentList = nodeEl.closest('[role="list"]')
-    const parentListItems = parentList?.querySelectorAll(
-        ':scope > [role="listitem"]'
-    )
+  const parentList = nodeEl.closest('[role="list"]');
+  const parentListItems = parentList?.querySelectorAll(
+    ':scope > [role="listitem"]'
+  );
 
-    if (!parentListItems) {
-        return null
-    }
+  if (!parentListItems) {
+    return null;
+  }
 
-    return getInnerIndex(parentListItems, monitor)
-}
+  return getInnerIndex(parentListItems, monitor);
+};
 
 const getHoverPosition = <T>(
-    el: Element,
-    pointerY: number,
-    context: TreeState<T>
+  el: Element,
+  pointerY: number,
+  context: TreeState<T>
 ): VerticalPosition => {
-    const bbox = el.getBoundingClientRect()
-    const offsetY = context.dropTargetOffset
-    const upSideY = bbox.top + offsetY
-    const lowerSideY = bbox.bottom - offsetY
+  const bbox = el.getBoundingClientRect();
+  const offsetY = context.dropTargetOffset;
+  const upSideY = bbox.top + offsetY;
+  const lowerSideY = bbox.bottom - offsetY;
 
-    if (pointerY > lowerSideY) {
-        return 'lower'
-    } else if (pointerY < upSideY) {
-        return 'upper'
-    }
+  if (pointerY > lowerSideY) {
+    return 'lower';
+  } else if (pointerY < upSideY) {
+    return 'upper';
+  }
 
-    return 'middle'
-}
+  return 'middle';
+};
 
 export const getDropTarget = <T>(
-    node: NodeModel<T> | null,
-    nodeEl: HTMLElement | null,
-    monitor: DropTargetMonitor,
-    context: TreeState<T>
+  node: NodeModel<T> | null,
+  nodeEl: HTMLElement | null,
+  monitor: DropTargetMonitor,
+  context: TreeState<T>
 ): DropTarget => {
-    if (!nodeEl) {
-        return null
+  if (!nodeEl) {
+    return null;
+  }
+
+  if (node === null) {
+    const listItems = nodeEl.querySelectorAll(':scope > [role="listitem"]');
+
+    return {
+      id: context.rootId,
+      index: getInnerIndex(listItems, monitor),
+    };
+  }
+
+  const dragSource: DragItem<T> = monitor.getItem();
+  const list = nodeEl.querySelector('[role="list"]');
+  const hoverPosition = getHoverPosition(
+    nodeEl,
+    monitor.getClientOffset()?.y || 0,
+    context
+  );
+
+  if (!list) {
+    if (hoverPosition === 'middle') {
+      return {
+        id: node.id,
+        index: 0,
+      };
     }
 
-    if (node === null) {
-        const listItems = nodeEl.querySelectorAll(':scope > [role="listitem"]')
+    if (isDroppable(dragSource.id, node.parent, context)) {
+      const outerIndex = getOuterIndex(node, nodeEl, monitor);
+
+      if (outerIndex === null) {
+        return null;
+      }
+
+      return {
+        id: node.parent,
+        index: outerIndex,
+      };
+    }
+
+    return null;
+  } else {
+    if (hoverPosition === 'upper') {
+      if (isDroppable(dragSource.id, node.parent, context)) {
+        const outerIndex = getOuterIndex(node, nodeEl, monitor);
+
+        if (outerIndex === null) {
+          return null;
+        }
 
         return {
-            id: context.rootId,
-            index: getInnerIndex(listItems, monitor),
-        }
-    }
-
-    const dragSource: DragItem<T> = monitor.getItem()
-    const list = nodeEl.querySelector('[role="list"]')
-    const hoverPosition = getHoverPosition(
-        nodeEl,
-        monitor.getClientOffset()?.y || 0,
-        context
-    )
-
-    if (!list) {
-        if (hoverPosition === 'middle') {
-            return {
-                id: node.id,
-                index: 0,
-            }
-        }
-
-        if (isDroppable(dragSource.id, node.parent, context)) {
-            const outerIndex = getOuterIndex(node, nodeEl, monitor)
-
-            if (outerIndex === null) {
-                return null
-            }
-
-            return {
-                id: node.parent,
-                index: outerIndex,
-            }
-        }
-
-        return null
-    } else {
-        if (hoverPosition === 'upper') {
-            if (isDroppable(dragSource.id, node.parent, context)) {
-                const outerIndex = getOuterIndex(node, nodeEl, monitor)
-
-                if (outerIndex === null) {
-                    return null
-                }
-
-                return {
-                    id: node.parent,
-                    index: outerIndex,
-                }
-            } else {
-                return {
-                    id: node.id,
-                    index: 0,
-                }
-            }
-        }
-
-        const listItems = list.querySelectorAll(':scope > [role="listitem"]')
-
+          id: node.parent,
+          index: outerIndex,
+        };
+      } else {
         return {
-            id: node.id,
-            index: getInnerIndex(listItems, monitor),
-        }
+          id: node.id,
+          index: 0,
+        };
+      }
     }
-}
+
+    const listItems = list.querySelectorAll(':scope > [role="listitem"]');
+
+    return {
+      id: node.id,
+      index: getInnerIndex(listItems, monitor),
+    };
+  }
+};

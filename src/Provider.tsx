@@ -1,15 +1,15 @@
 import React, {
-    useEffect,
-    useMemo,
-    useState,
-    PropsWithChildren,
-    ReactElement,
-    useImperativeHandle,
-    createContext,
-    ElementType,
-} from 'react'
-import { useDragDropManager } from 'react-dnd'
-import type { DragDropMonitor } from 'dnd-core'
+  useEffect,
+  useMemo,
+  useState,
+  PropsWithChildren,
+  ReactElement,
+  useImperativeHandle,
+  createContext,
+  ElementType,
+} from 'react';
+import { useDragDropManager } from 'react-dnd';
+import type { DragDropMonitor } from 'dnd-core';
 
 export type TreeMethods = {
   open: any;
@@ -101,153 +101,153 @@ export type DragControlState = {
   unlock: () => void;
 };
 export const Providers = <T,>(props: Props<T>): ReactElement => (
-    <TreeProvider {...props}>
-        <DragControlProvider>
-            <PlaceholderProvider>{props.children}</PlaceholderProvider>
-        </DragControlProvider>
-    </TreeProvider>
-)
+  <TreeProvider {...props}>
+    <DragControlProvider>
+      <PlaceholderProvider>{props.children}</PlaceholderProvider>
+    </DragControlProvider>
+  </TreeProvider>
+);
 
-export const TreeContext = createContext({})
+export const TreeContext = createContext({});
 
 export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
-    const [
-        openIds,
-        { handleToggle, handleCloseAll, handleOpenAll, handleOpen, handleClose },
-    ] = useOpenIdsHelper(props.tree, props.initialOpen)
+  const [
+    openIds,
+    { handleToggle, handleCloseAll, handleOpenAll, handleOpen, handleClose },
+  ] = useOpenIdsHelper(props.tree, props.initialOpen);
 
-    useImperativeHandle(props.treeRef, () => ({
-        open: (targetIds: any) => handleOpen(targetIds, props.onChangeOpen),
-        close: (targetIds: any) => handleClose(targetIds, props.onChangeOpen),
-        openAll: () => handleOpenAll(props.onChangeOpen),
-        closeAll: () => handleCloseAll(props.onChangeOpen),
-    }))
+  useImperativeHandle(props.treeRef, () => ({
+    open: (targetIds: any) => handleOpen(targetIds, props.onChangeOpen),
+    close: (targetIds: any) => handleClose(targetIds, props.onChangeOpen),
+    openAll: () => handleOpenAll(props.onChangeOpen),
+    closeAll: () => handleCloseAll(props.onChangeOpen),
+  }));
 
-    const monitor = useDragDropManager().getMonitor()
-    const canDropCallback = props.canDrop
-    const canDragCallback = props.canDrag
+  const monitor = useDragDropManager().getMonitor();
+  const canDropCallback = props.canDrop;
+  const canDragCallback = props.canDrag;
 
-    const value: TreeState<T> = {
-        extraAcceptTypes: [],
-        listComponent: 'ul',
-        listItemComponent: 'li',
-        placeholderComponent: 'li',
-        sort: true,
-        insertDroppableFirst: true,
-        enableAnimateExpand: false,
-        dropTargetOffset: 0,
-        initialOpen: false,
-        ...props,
-        openIds,
-        onDrop: (dragSource: any, dropTargetId: any, placeholderIndex: any) => {
-            // if dragSource is null,
-            // it means that the drop is from the outside of the react-dnd.
-            if (!dragSource) {
-                const options: DropOptions<T> = {
-                    dropTargetId,
-                    dropTarget: getTreeItem<T>(props.tree, dropTargetId),
-                    monitor,
-                }
+  const value: TreeState<T> = {
+    extraAcceptTypes: [],
+    listComponent: 'ul',
+    listItemComponent: 'li',
+    placeholderComponent: 'li',
+    sort: true,
+    insertDroppableFirst: true,
+    enableAnimateExpand: false,
+    dropTargetOffset: 0,
+    initialOpen: false,
+    ...props,
+    openIds,
+    onDrop: (dragSource: any, dropTargetId: any, placeholderIndex: any) => {
+      // if dragSource is null,
+      // it means that the drop is from the outside of the react-dnd.
+      if (!dragSource) {
+        const options: DropOptions<T> = {
+          dropTargetId,
+          dropTarget: getTreeItem<T>(props.tree, dropTargetId),
+          monitor,
+        };
 
-                if (props.sort === false) {
-                    options.destinationIndex = getDestIndex(
-                        props.tree,
-                        dropTargetId,
-                        placeholderIndex
-                    )
+        if (props.sort === false) {
+          options.destinationIndex = getDestIndex(
+            props.tree,
+            dropTargetId,
+            placeholderIndex
+          );
 
-                    options.relativeIndex = placeholderIndex
-                }
+          options.relativeIndex = placeholderIndex;
+        }
 
-                props.onDrop(props.tree, options)
-            } else {
-                const options: DropOptions<T> = {
-                    dragSourceId: dragSource.id,
-                    dropTargetId,
-                    dragSource: dragSource,
-                    dropTarget: getTreeItem<T>(props.tree, dropTargetId),
-                    monitor,
-                }
+        props.onDrop(props.tree, options);
+      } else {
+        const options: DropOptions<T> = {
+          dragSourceId: dragSource.id,
+          dropTargetId,
+          dragSource: dragSource,
+          dropTarget: getTreeItem<T>(props.tree, dropTargetId),
+          monitor,
+        };
 
-                let tree = props.tree
+        let tree = props.tree;
 
-                // If the dragSource does not exist in the tree,
-                // it is an external node, so add it to the tree
-                if (!getTreeItem(tree, dragSource.id)) {
-                    tree = [...tree, dragSource]
-                }
+        // If the dragSource does not exist in the tree,
+        // it is an external node, so add it to the tree
+        if (!getTreeItem(tree, dragSource.id)) {
+          tree = [...tree, dragSource];
+        }
 
-                if (props.sort === false) {
-                    const [, destIndex] = getModifiedIndex(
-                        tree,
-                        dragSource.id,
-                        dropTargetId,
-                        placeholderIndex
-                    )
-                    options.destinationIndex = destIndex
-                    options.relativeIndex = placeholderIndex
-                    props.onDrop(
-                        mutateTreeWithIndex<T>(
-                            tree,
-                            dragSource.id,
-                            dropTargetId,
-                            placeholderIndex
-                        ),
-                        options
-                    )
+        if (props.sort === false) {
+          const [, destIndex] = getModifiedIndex(
+            tree,
+            dragSource.id,
+            dropTargetId,
+            placeholderIndex
+          );
+          options.destinationIndex = destIndex;
+          options.relativeIndex = placeholderIndex;
+          props.onDrop(
+            mutateTreeWithIndex<T>(
+              tree,
+              dragSource.id,
+              dropTargetId,
+              placeholderIndex
+            ),
+            options
+          );
 
-                    return
-                }
+          return;
+        }
 
-                props.onDrop(mutateTree<T>(tree, dragSource.id, dropTargetId), options)
-            }
-        },
-        canDrop: canDropCallback
-            ? (dragSourceId: any, dropTargetId: any) =>
-                canDropCallback(props.tree, {
-                    dragSourceId,
-                    dropTargetId,
-                    dragSource: monitor.getItem(),
-                    dropTarget: getTreeItem(props.tree, dropTargetId),
-                    monitor,
-                })
-            : undefined,
-        canDrag: canDragCallback
-            ? (id: any) => canDragCallback(getTreeItem(props.tree, id))
-            : undefined,
-        onToggle: (id: any) => handleToggle(id, props.onChangeOpen),
-    }
+        props.onDrop(mutateTree<T>(tree, dragSource.id, dropTargetId), options);
+      }
+    },
+    canDrop: canDropCallback
+      ? (dragSourceId: any, dropTargetId: any) =>
+          canDropCallback(props.tree, {
+            dragSourceId,
+            dropTargetId,
+            dragSource: monitor.getItem(),
+            dropTarget: getTreeItem(props.tree, dropTargetId),
+            monitor,
+          })
+      : undefined,
+    canDrag: canDragCallback
+      ? (id: any) => canDragCallback(getTreeItem(props.tree, id))
+      : undefined,
+    onToggle: (id: any) => handleToggle(id, props.onChangeOpen),
+  };
 
-    return (
-        <TreeContext.Provider value={value}>{props.children}</TreeContext.Provider>
-    )
-}
+  return (
+    <TreeContext.Provider value={value}>{props.children}</TreeContext.Provider>
+  );
+};
 
 export const DragControlContext = createContext<DragControlState>(
   {} as DragControlState
-)
+);
 
 const initialState = {
-    isLock: false,
-}
+  isLock: false,
+};
 
 export const DragControlProvider: React.FC<{ children: React.ReactNode }> = (
-    props
+  props
 ) => {
-    const [isLock, setIsLock] = useState(initialState.isLock)
+  const [isLock, setIsLock] = useState(initialState.isLock);
 
-    return (
-        <DragControlContext.Provider
-            value={{
-                isLock,
-                lock: () => setIsLock(true),
-                unlock: () => setIsLock(false),
-            }}
-        >
-            {props.children}
-        </DragControlContext.Provider>
-    )
-}
+  return (
+    <DragControlContext.Provider
+      value={{
+        isLock,
+        lock: () => setIsLock(true),
+        unlock: () => setIsLock(false),
+      }}
+    >
+      {props.children}
+    </DragControlContext.Provider>
+  );
+};
 
 export type PlaceholderState = {
   dropTargetId: NodeModel['id'] | undefined;
@@ -258,150 +258,150 @@ export type PlaceholderState = {
 
 export const PlaceholderContext = createContext<PlaceholderState>(
   {} as PlaceholderState
-)
+);
 
 const initialPlaceholderState = {
-    dropTargetId: undefined,
-    index: undefined,
-}
+  dropTargetId: undefined,
+  index: undefined,
+};
 
 export const PlaceholderProvider: React.FC<{ children: React.ReactNode }> = (
-    props
+  props
 ) => {
-    const [dropTargetId, setDropTargetId] = useState<
+  const [dropTargetId, setDropTargetId] = useState<
     PlaceholderState['dropTargetId']
-  >(initialPlaceholderState.dropTargetId)
-    const [index, setIndex] = useState<PlaceholderState['index']>(
-        initialPlaceholderState.index
-    )
+  >(initialPlaceholderState.dropTargetId);
+  const [index, setIndex] = useState<PlaceholderState['index']>(
+    initialPlaceholderState.index
+  );
 
-    const showPlaceholder = (
-        dropTargetId: NodeModel['id'],
-        index: number
-    ): void => {
-        setDropTargetId(dropTargetId)
-        setIndex(index)
-    }
+  const showPlaceholder = (
+    dropTargetId: NodeModel['id'],
+    index: number
+  ): void => {
+    setDropTargetId(dropTargetId);
+    setIndex(index);
+  };
 
-    const hidePlaceholder = () => {
-        setDropTargetId(initialPlaceholderState.dropTargetId)
-        setIndex(initialPlaceholderState.index)
-    }
+  const hidePlaceholder = () => {
+    setDropTargetId(initialPlaceholderState.dropTargetId);
+    setIndex(initialPlaceholderState.index);
+  };
 
-    return (
-        <PlaceholderContext.Provider
-            value={{
-                dropTargetId,
-                index,
-                showPlaceholder,
-                hidePlaceholder,
-            }}
-        >
-            {props.children}
-        </PlaceholderContext.Provider>
-    )
-}
+  return (
+    <PlaceholderContext.Provider
+      value={{
+        dropTargetId,
+        index,
+        showPlaceholder,
+        hidePlaceholder,
+      }}
+    >
+      {props.children}
+    </PlaceholderContext.Provider>
+  );
+};
 
 export function mutateTree<T>(
-    tree: NodeModel<T>[],
-    dragSourceId: NodeModel['id'],
-    dropTargetId: NodeModel['id']
+  tree: NodeModel<T>[],
+  dragSourceId: NodeModel['id'],
+  dropTargetId: NodeModel['id']
 ): NodeModel<T>[] {
-    return tree.map((node) => {
-        if (node.id === dragSourceId) {
-            return {
-                ...node,
-                parent: dropTargetId,
-            }
-        }
+  return tree.map((node) => {
+    if (node.id === dragSourceId) {
+      return {
+        ...node,
+        parent: dropTargetId,
+      };
+    }
 
-        return node
-    })
+    return node;
+  });
 }
 
 export function mutateTreeWithIndex<T>(
-    tree: NodeModel<T>[],
-    dragSourceId: NodeModel['id'],
-    dropTargetId: NodeModel['id'],
-    index: number
+  tree: NodeModel<T>[],
+  dragSourceId: NodeModel['id'],
+  dropTargetId: NodeModel['id'],
+  index: number
 ): NodeModel<T>[] {
-    const [srcIndex, destIndex] = getModifiedIndex(
-        tree,
-        dragSourceId,
-        dropTargetId,
-        index
-    )
+  const [srcIndex, destIndex] = getModifiedIndex(
+    tree,
+    dragSourceId,
+    dropTargetId,
+    index
+  );
 
-    const newTree = [...tree]
-    arrayMoveMutable(newTree, srcIndex, destIndex)
+  const newTree = [...tree];
+  arrayMoveMutable(newTree, srcIndex, destIndex);
 
-    return newTree.map((node) => {
-        if (node.id === dragSourceId) {
-            return {
-                ...node,
-                parent: dropTargetId,
-            }
-        }
+  return newTree.map((node) => {
+    if (node.id === dragSourceId) {
+      return {
+        ...node,
+        parent: dropTargetId,
+      };
+    }
 
-        return node
-    })
+    return node;
+  });
 }
 
 function arrayMoveMutable<T>(array: T[], fromIndex: number, toIndex: number) {
-    const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex
+  const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex;
 
-    if (startIndex >= 0 && startIndex < array.length) {
-        const endIndex = toIndex < 0 ? array.length + toIndex : toIndex
-        const [item] = array.splice(fromIndex, 1)
-        array.splice(endIndex, 0, item)
-    }
+  if (startIndex >= 0 && startIndex < array.length) {
+    const endIndex = toIndex < 0 ? array.length + toIndex : toIndex;
+    const [item] = array.splice(fromIndex, 1);
+    array.splice(endIndex, 0, item);
+  }
 }
 
 function getTreeItem<T>(
-    tree: NodeModel<T>[],
-    id: NodeModel['id']
+  tree: NodeModel<T>[],
+  id: NodeModel['id']
 ): NodeModel<T> | undefined {
-    return tree.find((n) => n.id === id)
+  return tree.find((n) => n.id === id);
 }
 
 function getDestIndex(
-    tree: NodeModel[],
-    dropTargetId: NodeModel['id'],
-    index: number
+  tree: NodeModel[],
+  dropTargetId: NodeModel['id'],
+  index: number
 ) {
-    if (index === 0) {
-        return 0
-    }
+  if (index === 0) {
+    return 0;
+  }
 
-    const siblings = tree.filter((node) => node.parent === dropTargetId)
+  const siblings = tree.filter((node) => node.parent === dropTargetId);
 
-    if (siblings[index]) {
-        return tree.findIndex((node) => node.id === siblings[index].id)
-    }
+  if (siblings[index]) {
+    return tree.findIndex((node) => node.id === siblings[index].id);
+  }
 
-    return tree.findIndex((node) => node.id === siblings[index - 1].id) + 1
+  return tree.findIndex((node) => node.id === siblings[index - 1].id) + 1;
 }
 
 const getSrcIndex = (tree: NodeModel[], dragSourceId: NodeModel['id']) => {
-    return tree.findIndex((node) => node.id === dragSourceId)
-}
+  return tree.findIndex((node) => node.id === dragSourceId);
+};
 
 function getModifiedIndex(
-    tree: NodeModel[],
-    dragSourceId: NodeModel['id'],
-    dropTargetId: NodeModel['id'],
-    index: number
+  tree: NodeModel[],
+  dragSourceId: NodeModel['id'],
+  dropTargetId: NodeModel['id'],
+  index: number
 ): [number, number] {
-    const srcIndex = getSrcIndex(tree, dragSourceId)
-    let destIndex = getDestIndex(tree, dropTargetId, index)
-    destIndex = destIndex > srcIndex ? destIndex - 1 : destIndex
+  const srcIndex = getSrcIndex(tree, dragSourceId);
+  let destIndex = getDestIndex(tree, dropTargetId, index);
+  destIndex = destIndex > srcIndex ? destIndex - 1 : destIndex;
 
-    return [srcIndex, destIndex]
+  return [srcIndex, destIndex];
 }
 
 export const useOpenIdsHelper = (
-    tree: NodeModel[],
-    initialOpen?: InitialOpen
+  tree: NodeModel[],
+  initialOpen?: InitialOpen
 ): [
   NodeModel['id'][],
   {
@@ -412,87 +412,87 @@ export const useOpenIdsHelper = (
     handleClose: any;
   }
 ] => {
-    let initialOpenIds: NodeModel['id'][] = useMemo(() => {
-        if (initialOpen === true) {
-            return (initialOpenIds = tree
-                .filter((node) => node.droppable)
-                .map((node) => node.id))
-        } else if (Array.isArray(initialOpen)) {
-            return initialOpen
-        }
-        return []
-    }, [initialOpen])
-
-    const [openIds, setOpenIds] = useState<NodeModel['id'][]>(initialOpenIds)
-
-    useEffect(() => setOpenIds(initialOpenIds), [initialOpen])
-
-    const handleToggle = (targetId: NodeModel['id'], callback: any) => {
-        const newOpenIds = openIds.includes(targetId)
-            ? openIds.filter((id) => id !== targetId)
-            : [...openIds, targetId]
-
-        setOpenIds(newOpenIds)
-
-        if (callback) {
-            callback(newOpenIds)
-        }
+  let initialOpenIds: NodeModel['id'][] = useMemo(() => {
+    if (initialOpen === true) {
+      return (initialOpenIds = tree
+        .filter((node) => node.droppable)
+        .map((node) => node.id));
+    } else if (Array.isArray(initialOpen)) {
+      return initialOpen;
     }
+    return [];
+  }, [initialOpen]);
 
-    const handleCloseAll = (callback: ChangeOpenHandler | undefined) => {
-        setOpenIds([])
+  const [openIds, setOpenIds] = useState<NodeModel['id'][]>(initialOpenIds);
 
-        if (callback) {
-            callback([])
-        }
+  useEffect(() => setOpenIds(initialOpenIds), [initialOpen]);
+
+  const handleToggle = (targetId: NodeModel['id'], callback: any) => {
+    const newOpenIds = openIds.includes(targetId)
+      ? openIds.filter((id) => id !== targetId)
+      : [...openIds, targetId];
+
+    setOpenIds(newOpenIds);
+
+    if (callback) {
+      callback(newOpenIds);
     }
+  };
 
-    const handleOpenAll = (callback: ChangeOpenHandler | undefined) => {
-        const newOpenIds = tree
-            .filter((node) => node.droppable)
-            .map((node) => node.id)
-        setOpenIds(newOpenIds)
+  const handleCloseAll = (callback: ChangeOpenHandler | undefined) => {
+    setOpenIds([]);
 
-        if (callback) {
-            callback(newOpenIds)
-        }
+    if (callback) {
+      callback([]);
     }
+  };
 
-    const handleOpen = (targetIds: any, callback: any) => {
-        const newOpenIds = [
-            ...openIds,
-            ...tree
-                .filter(
-                    (node) =>
-                        node.droppable &&
+  const handleOpenAll = (callback: ChangeOpenHandler | undefined) => {
+    const newOpenIds = tree
+      .filter((node) => node.droppable)
+      .map((node) => node.id);
+    setOpenIds(newOpenIds);
+
+    if (callback) {
+      callback(newOpenIds);
+    }
+  };
+
+  const handleOpen = (targetIds: any, callback: any) => {
+    const newOpenIds = [
+      ...openIds,
+      ...tree
+        .filter(
+          (node) =>
+            node.droppable &&
             (Array.isArray(targetIds)
-                ? targetIds.includes(node.id)
-                : node.id === targetIds)
-                )
-                .map((node) => node.id),
-        ].filter((value, index, self) => self.indexOf(value) === index)
-
-        setOpenIds(newOpenIds)
-
-        if (callback) {
-            callback(newOpenIds)
-        }
-    }
-
-    const handleClose = (targetIds: any, callback: any) => {
-        const newOpenIds = openIds.filter((id) =>
-            Array.isArray(targetIds) ? !targetIds.includes(id) : id !== targetIds
+              ? targetIds.includes(node.id)
+              : node.id === targetIds)
         )
+        .map((node) => node.id),
+    ].filter((value, index, self) => self.indexOf(value) === index);
 
-        setOpenIds(newOpenIds)
+    setOpenIds(newOpenIds);
 
-        if (callback) {
-            callback(newOpenIds)
-        }
+    if (callback) {
+      callback(newOpenIds);
     }
+  };
 
-    return [
-        openIds,
-        { handleToggle, handleCloseAll, handleOpenAll, handleOpen, handleClose },
-    ]
-}
+  const handleClose = (targetIds: any, callback: any) => {
+    const newOpenIds = openIds.filter((id) =>
+      Array.isArray(targetIds) ? !targetIds.includes(id) : id !== targetIds
+    );
+
+    setOpenIds(newOpenIds);
+
+    if (callback) {
+      callback(newOpenIds);
+    }
+  };
+
+  return [
+    openIds,
+    { handleToggle, handleCloseAll, handleOpenAll, handleOpen, handleClose },
+  ];
+};
