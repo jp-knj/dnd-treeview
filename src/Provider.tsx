@@ -96,7 +96,6 @@ export const Providers = <T,>(props: Props<T>): ReactElement => (
   </TreeProvider>
 );
 
-export const TreeContext = createContext({});
 
 export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
   const [openIds, { handleToggle }] = useOpenIdsHelper(
@@ -200,9 +199,8 @@ export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
   );
 };
 
-export const DragControlContext = createContext<DragControlState>(
-  {} as DragControlState
-);
+export const TreeContext = createContext({});
+
 
 const initialState = {
   isLock: false,
@@ -226,6 +224,10 @@ export const DragControlProvider: React.FC<{ children: React.ReactNode }> = (
   );
 };
 
+export const DragControlContext = createContext<DragControlState>(
+  {} as DragControlState
+);
+
 export type PlaceholderState = {
   dropTargetId: NodeModel['id'] | undefined;
   index: number | undefined;
@@ -233,9 +235,6 @@ export type PlaceholderState = {
   hidePlaceholder: () => void;
 };
 
-export const PlaceholderContext = createContext<PlaceholderState>(
-  {} as PlaceholderState
-);
 
 const initialPlaceholderState = {
   dropTargetId: undefined,
@@ -279,6 +278,9 @@ export const PlaceholderProvider: React.FC<{ children: React.ReactNode }> = (
   );
 };
 
+export const PlaceholderContext = createContext<PlaceholderState>(
+  {} as PlaceholderState
+);
 export function mutateTree<T>(
   tree: NodeModel<T>[],
   dragSourceId: NodeModel['id'],
