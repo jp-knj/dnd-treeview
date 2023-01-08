@@ -6,7 +6,6 @@ import React, {
   ReactElement,
   useImperativeHandle,
   createContext,
-  ElementType,
 } from 'react';
 import { useDragDropManager } from 'react-dnd';
 import type { DragDropMonitor } from 'dnd-core';
@@ -43,8 +42,6 @@ export type TreeState<T> = TreeStateBase<T> & {
 
 export type TreeProps<T = unknown> = TreeStateBase<T> & {
   extraAcceptTypes?: string[];
-  listItemComponent?: ElementType;
-  placeholderComponent?: ElementType;
   sort?: SortCallback<T> | boolean;
   insertDroppableFirst?: boolean;
   enableAnimateExpand?: boolean;
