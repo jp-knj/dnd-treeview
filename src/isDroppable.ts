@@ -1,26 +1,5 @@
 import { NodeModel, TreeState } from './Provider';
 
-export const isAncestor = (
-  tree: NodeModel[],
-  sourceId: NodeModel['id'],
-  targetId: NodeModel['id']
-): boolean => {
-  if (targetId === 0) {
-    return false;
-  }
-
-  const targetNode = tree.find((node) => node.id === targetId);
-
-  if (targetNode === undefined) {
-    return false;
-  }
-
-  if (targetNode.parent === sourceId) {
-    return true;
-  }
-
-  return isAncestor(tree, sourceId, targetNode.parent);
-};
 export const isDroppable = <T>(
   dragSourceId: NodeModel['id'] | undefined,
   dropTargetId: NodeModel['id'],
@@ -37,11 +16,9 @@ export const isDroppable = <T>(
 
     const dropTargetNode = tree.find((node) => node.id === dropTargetId);
 
-    if (dropTargetNode && dropTargetNode.droppable) {
-      return true;
-    }
+    return !!(dropTargetNode && dropTargetNode.droppable);
 
-    return false;
+
   } else {
     if (canDrop) {
       const result = canDrop(dragSourceId, dropTargetId);
@@ -75,3 +52,57 @@ export const isDroppable = <T>(
     return !isAncestor(tree, dragSourceId, dropTargetId);
   }
 };
+
+export const isAncestor = (
+  tree: NodeModel[],
+  sourceId: NodeModel['id'],
+  targetId: NodeModel['id']
+): boolean => {
+  if (targetId === 0) {
+    return false;
+  }
+
+  const targetNode = tree.find((node) => node.id === targetId);
+
+  if (targetNode === undefined) {
+    return false;
+  }
+
+  if (targetNode.parent === sourceId) {
+    return true;
+  }
+
+  return isAncestor(tree, sourceId, targetNode.parent);
+};
+
+
+if (import.meta.vitest) {
+  import { NodeRender } from "./Provider";
+  const { describe, it, expect } = import.meta.vitest
+  describe("isDroppable", () => {
+    it("check for drop availability", () => {
+      const render: NodeRender<unknown> = (node) => {
+        return <div>{node.text}</div>;
+      };
+
+      const treeContext: TreeState<unknown> = {
+        tree: treeData,
+        rootId: 0,
+        render,
+        extraAcceptTypes: [],
+        sort: false,
+        insertDroppableFirst: true,
+        dropTargetOffset: 0,
+        initialOpen: false,
+        openIds: [],
+        onDrop: () => undefined,
+        onToggle: () => undefined,
+      };
+
+      expect(isDroppable(7, 7, treeContext)).toBe(false);
+      expect(isDroppable(7, 1, treeContext)).toBe(true);
+      expect(isDroppable(1, 1, treeContext)).toBe(false);
+      expect(isDroppable(4, 5, treeContext)).toBe(false);
+    });
+  });
+}
