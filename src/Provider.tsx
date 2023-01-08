@@ -14,8 +14,6 @@ import type { DragDropMonitor } from 'dnd-core';
 export type TreeMethods = {
   open: any;
   close: any;
-  openAll(): void;
-  closeAll(): void;
 };
 
 export type TreeStateBase<T> = {
@@ -112,14 +110,12 @@ export const TreeContext = createContext({});
 export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
   const [
     openIds,
-    { handleToggle, handleCloseAll, handleOpenAll, handleOpen, handleClose },
+    { handleToggle, handleOpen, handleClose },
   ] = useOpenIdsHelper(props.tree, props.initialOpen);
 
   useImperativeHandle(props.treeRef, () => ({
     open: (targetIds: any) => handleOpen(targetIds, props.onChangeOpen),
-    close: (targetIds: any) => handleClose(targetIds, props.onChangeOpen),
-    openAll: () => handleOpenAll(props.onChangeOpen),
-    closeAll: () => handleCloseAll(props.onChangeOpen),
+    close: (targetIds: any) => handleClose(targetIds, props.onChangeOpen)
   }));
 
   const monitor = useDragDropManager().getMonitor();
@@ -405,8 +401,6 @@ export const useOpenIdsHelper = (
   NodeModel['id'][],
   {
     handleToggle: any;
-    handleCloseAll: (callback?: ChangeOpenHandler) => void;
-    handleOpenAll: (callback?: ChangeOpenHandler) => void;
     handleOpen: any;
     handleClose: any;
   }
@@ -431,25 +425,6 @@ export const useOpenIdsHelper = (
       ? openIds.filter((id) => id !== targetId)
       : [...openIds, targetId];
 
-    setOpenIds(newOpenIds);
-
-    if (callback) {
-      callback(newOpenIds);
-    }
-  };
-
-  const handleCloseAll = (callback: ChangeOpenHandler | undefined) => {
-    setOpenIds([]);
-
-    if (callback) {
-      callback([]);
-    }
-  };
-
-  const handleOpenAll = (callback: ChangeOpenHandler | undefined) => {
-    const newOpenIds = tree
-      .filter((node) => node.droppable)
-      .map((node) => node.id);
     setOpenIds(newOpenIds);
 
     if (callback) {
@@ -492,6 +467,6 @@ export const useOpenIdsHelper = (
 
   return [
     openIds,
-    { handleToggle, handleCloseAll, handleOpenAll, handleOpen, handleClose },
+    { handleToggle, handleOpen, handleClose },
   ];
 };
