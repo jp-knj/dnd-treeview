@@ -16,7 +16,6 @@ import {
   NodeModel,
   SortCallback,
 } from './Provider';
-import { useContainerClassName } from './useContainerClassName';
 import { useDropRoot } from './useDropRoot';
 import { Placeholder } from './Placeholder';
 import { Node } from './Node';
@@ -114,11 +113,10 @@ export const Container = <T,>(props: Props): ReactElement => {
     drop(ref);
   }
 
-  const className = useContainerClassName(props.parentId, isOver);
   const rootProps = treeContext.rootProps || {};
 
   return (
-    <ul ref={ref} role="list" {...rootProps} className={className}>
+    <ul ref={ref} role="list" {...rootProps}>
       {view.map((node, index) => (
         <React.Fragment key={node.id}>
           <Placeholder
