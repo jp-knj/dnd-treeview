@@ -21,7 +21,6 @@ export type TreeMethods = {
 export type TreeStateBase<T> = {
   tree: NodeModel<T>[];
   rootId: NodeModel['id'];
-  classes?: any;
   rootProps?: any;
   render: any;
   dragPreviewRender?: any;

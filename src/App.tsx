@@ -24,7 +24,6 @@ export function App() {
           <DragPreview monitorProps={monitorProps} />
         )}
         onDrop={handleDrop}
-        classes={{}}
         sort={false}
         insertDroppableFirst={false}
         canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
