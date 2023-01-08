@@ -56,25 +56,28 @@ function TreeInner<T>(
 }
 
 export const Container = <T,>(props: Props): ReactElement => {
-  const treeContext = useTreeContext<T>();
   const ref = useRef<HTMLLIElement>(null);
-  const nodes = treeContext.tree.filter((l) => l.parent === props.parentId);
+  const treeContext = useTreeContext<T>();
 
-  let view = nodes;
   const sortCallback =
     typeof treeContext.sort === 'function' ? treeContext.sort : compareItems;
 
+  const nodes = treeContext.tree.filter((l) => l.parent === props.parentId);
+  let view = nodes;
   if (treeContext.insertDroppableFirst) {
     let droppableNodes = nodes.filter((n) => n.droppable);
     let nonDroppableNodes = nodes.filter((n) => !n.droppable);
 
-    if (treeContext.sort === false) {
-      view = [...droppableNodes, ...nonDroppableNodes];
-    } else {
+    if (treeContext.sort === true) {
       droppableNodes = droppableNodes.sort(sortCallback);
       nonDroppableNodes = nonDroppableNodes.sort(sortCallback);
       view = [...droppableNodes, ...nonDroppableNodes];
     }
+
+    if (treeContext.sort === false) {
+      view = [...droppableNodes, ...nonDroppableNodes];
+    }
+
   } else {
     if (treeContext.sort !== false) {
       view = nodes.sort(sortCallback);
@@ -114,6 +117,7 @@ export const Container = <T,>(props: Props): ReactElement => {
   );
 };
 
+
 export const compareItems: SortCallback = (a, b) => {
   if (a.text > b.text) {
     return 1;
@@ -142,6 +146,7 @@ export const DragLayer = <T,>(): ReactElement | null => {
     </div>
   );
 };
+
 
 function useTreeDragLayer<T>(): DragLayerMonitorProps<T> {
   return useDragLayer((monitor) => {
