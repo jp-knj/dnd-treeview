@@ -99,15 +99,10 @@ export const Providers = <T,>(props: Props<T>): ReactElement => (
 export const TreeContext = createContext({});
 
 export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
-  const [openIds, { handleToggle, handleOpen, handleClose }] = useOpenIdsHelper(
+  const [openIds, { handleToggle }] = useOpenIdsHelper(
     props.tree,
     props.initialOpen
   );
-
-  useImperativeHandle(props.treeRef, () => ({
-    open: (targetIds: any) => handleOpen(targetIds, props.onChangeOpen),
-    close: (targetIds: any) => handleClose(targetIds, props.onChangeOpen),
-  }));
 
   const monitor = useDragDropManager().getMonitor();
   const canDropCallback = props.canDrop;
@@ -388,8 +383,6 @@ export const useOpenIdsHelper = (
   NodeModel['id'][],
   {
     handleToggle: any;
-    handleOpen: any;
-    handleClose: any;
   }
 ] => {
   let initialOpenIds: NodeModel['id'][] = useMemo(() => {
@@ -411,7 +404,6 @@ export const useOpenIdsHelper = (
     const newOpenIds = openIds.includes(targetId)
       ? openIds.filter((id) => id !== targetId)
       : [...openIds, targetId];
-
     setOpenIds(newOpenIds);
 
     if (callback) {
@@ -419,38 +411,5 @@ export const useOpenIdsHelper = (
     }
   };
 
-  const handleOpen = (targetIds: any, callback: any) => {
-    const newOpenIds = [
-      ...openIds,
-      ...tree
-        .filter(
-          (node) =>
-            node.droppable &&
-            (Array.isArray(targetIds)
-              ? targetIds.includes(node.id)
-              : node.id === targetIds)
-        )
-        .map((node) => node.id),
-    ].filter((value, index, self) => self.indexOf(value) === index);
-
-    setOpenIds(newOpenIds);
-
-    if (callback) {
-      callback(newOpenIds);
-    }
-  };
-
-  const handleClose = (targetIds: any, callback: any) => {
-    const newOpenIds = openIds.filter((id) =>
-      Array.isArray(targetIds) ? !targetIds.includes(id) : id !== targetIds
-    );
-
-    setOpenIds(newOpenIds);
-
-    if (callback) {
-      callback(newOpenIds);
-    }
-  };
-
-  return [openIds, { handleToggle, handleOpen, handleClose }];
+  return [openIds, { handleToggle }];
 };
