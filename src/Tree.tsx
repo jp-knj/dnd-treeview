@@ -5,7 +5,7 @@ import React, {
   forwardRef,
   PropsWithChildren,
 } from 'react';
-import { useDragLayer, XYCoord } from 'react-dnd';
+import { XYCoord } from 'react-dnd';
 import {
   Providers,
   TreeMethods,
@@ -18,6 +18,7 @@ import { Placeholder } from './Placeholder';
 import { Node } from './Node';
 import { isDroppable } from './isDroppable';
 import { useTreeContext } from './useTreeContext';
+import { DragLayer } from "./DragLayer";
 
 export const ItemTypes = {
   TREE_ITEM: Symbol(),
@@ -84,8 +85,7 @@ export const Container = <T,>(props: Props): ReactElement => {
     }
   }
 
-  const [isOver, dragSource, drop] = useDropRoot(ref);
-
+  const [dragSource, drop] = useDropRoot(ref);
   if (
     props.parentId === treeContext.rootId &&
     isDroppable(dragSource?.id, treeContext.rootId, treeContext)
@@ -126,62 +126,4 @@ export const compareItems: SortCallback = (a, b) => {
   }
 
   return 0;
-};
-
-export const DragLayer = <T,>(): ReactElement | null => {
-  const context = useTreeContext<T>();
-  const monitorProps = useTreeDragLayer<T>();
-  const { isDragging, clientOffset } = monitorProps;
-  console.log(monitorProps)
-
-  if (!isDragging || !clientOffset) {
-    return null;
-  }
-
-  return (
-    <div style={rootStyle}>
-      <div style={getItemStyles(monitorProps)}>
-        {context.dragPreviewRender && context.dragPreviewRender(monitorProps)}
-      </div>
-    </div>
-  );
-};
-
-
-function useTreeDragLayer<T>(): DragLayerMonitorProps<T> {
-  return useDragLayer((monitor) => {
-    const itemType = monitor.getItemType();
-
-    return {
-      item: monitor.getItem(),
-      clientOffset: monitor.getClientOffset(),
-      isDragging: monitor.isDragging() && itemType === ItemTypes.TREE_ITEM,
-    };
-  });
-}
-
-const rootStyle: React.CSSProperties = {
-  height: '100%',
-  left: 0,
-  pointerEvents: 'none',
-  position: 'fixed',
-  top: 0,
-  width: '100%',
-  zIndex: 100,
-};
-
-const getItemStyles = (monitorProps: any): React.CSSProperties => {
-  const offset = monitorProps.clientOffset;
-
-  if (!offset) {
-    return {};
-  }
-
-  const { x, y } = offset;
-  const transform = `translate(${x}px, ${y}px)`;
-
-  return {
-    pointerEvents: 'none',
-    transform,
-  };
 };
