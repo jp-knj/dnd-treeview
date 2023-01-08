@@ -17,7 +17,7 @@ export function App() {
           node: NodeModel<{ fileType: string; fileSize: string }>,
           { depth, isOpen, onToggle }: any
         ) => (
-          <CustomNode
+          <Node
             node={node}
             depth={depth}
             isOpen={isOpen}
@@ -46,8 +46,7 @@ export function App() {
   );
 }
 
-export const CustomNode = ({
-  testIdPrefix = '',
+export const Node = ({
   ...props
 }: {
   node: NodeModel<{
@@ -56,7 +55,6 @@ export const CustomNode = ({
   }>;
   depth: number;
   isOpen: boolean;
-  testIdPrefix?: string;
   onToggle: (id: NodeModel['id']) => void;
 }) => {
   const { id, droppable, data } = props.node;
@@ -70,7 +68,6 @@ export const CustomNode = ({
   return (
     <div
       style={{ paddingInlineStart: indent }}
-      data-testid={`${testIdPrefix}custom-node-${id}`}
     >
       <div>{props.node.droppable && <div onClick={handleToggle}>→</div>}</div>
       <div></div>
