@@ -1,7 +1,6 @@
 import React, {
   RefObject,
   useRef,
-  useContext,
   ReactElement,
   forwardRef,
   PropsWithChildren,
@@ -9,10 +8,8 @@ import React, {
 import { useDragLayer, XYCoord } from 'react-dnd';
 import {
   Providers,
-  TreeContext,
   TreeMethods,
   TreeProps,
-  TreeState,
   NodeModel,
   SortCallback,
 } from './Provider';
@@ -20,6 +17,7 @@ import { useDropRoot } from './useDropRoot';
 import { Placeholder } from './Placeholder';
 import { Node } from './Node';
 import { isDroppable } from './isDroppable';
+import { useTreeContext } from "./useTreeContext";
 
 export const ItemTypes = {
   TREE_ITEM: Symbol(),
@@ -60,18 +58,6 @@ const getItemStyles = <T,>(monitorProps: any): React.CSSProperties => {
     transform,
   };
 };
-
-function useTreeContext<T>(): TreeState<T> {
-  const treeContext = useContext<TreeState<T>>(
-    TreeContext as unknown as React.Context<TreeState<T>>
-  );
-
-  if (!treeContext) {
-    throw new Error('useTreeContext must be used under TreeProvider');
-  }
-
-  return treeContext;
-}
 
 type Props = PropsWithChildren<{
   parentId: NodeModel['id'];
