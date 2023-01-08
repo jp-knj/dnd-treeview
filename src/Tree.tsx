@@ -43,6 +43,18 @@ export const Tree = forwardRef(TreeInner) as <T = unknown>(
   props: TreeProps<T> & { ref?: React.ForwardedRef<TreeMethods> }
 ) => ReturnType<typeof TreeInner>;
 
+function TreeInner<T>(
+  props: TreeProps<T>,
+  ref: React.ForwardedRef<TreeMethods>
+) {
+  return (
+    <Providers {...props} treeRef={ref}>
+      {props.dragPreviewRender && <DragLayer />}
+      <Container parentId={props.rootId} depth={0} />
+    </Providers>
+  );
+}
+
 export const Container = <T,>(props: Props): ReactElement => {
   const treeContext = useTreeContext<T>();
   const ref = useRef<HTMLLIElement>(null);
@@ -102,20 +114,6 @@ export const Container = <T,>(props: Props): ReactElement => {
   );
 };
 
-function TreeInner<T>(
-  props: TreeProps<T>,
-  ref: React.ForwardedRef<TreeMethods>
-) {
-  return (
-    <Providers {...props} treeRef={ref}>
-      {props.dragPreviewRender && <DragLayer />}
-      <Container parentId={props.rootId} depth={0} />
-    </Providers>
-  );
-}
-
-
-
 export const compareItems: SortCallback = (a, b) => {
   if (a.text > b.text) {
     return 1;
@@ -144,7 +142,6 @@ export const DragLayer = <T,>(): ReactElement | null => {
     </div>
   );
 };
-
 
 function useTreeDragLayer<T>(): DragLayerMonitorProps<T> {
   return useDragLayer((monitor) => {
