@@ -29,7 +29,6 @@ export type TreeStateBase<T> = {
 
 export type TreeState<T> = TreeStateBase<T> & {
   extraAcceptTypes: string[];
-  listComponent: ElementType;
   listItemComponent: ElementType;
   placeholderComponent: ElementType;
   sort: SortCallback<T> | boolean;
@@ -46,7 +45,6 @@ export type TreeState<T> = TreeStateBase<T> & {
 
 export type TreeProps<T = unknown> = TreeStateBase<T> & {
   extraAcceptTypes?: string[];
-  listComponent?: ElementType;
   listItemComponent?: ElementType;
   placeholderComponent?: ElementType;
   sort?: SortCallback<T> | boolean;
@@ -124,7 +122,6 @@ export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
 
   const value: TreeState<T> = {
     extraAcceptTypes: [],
-    listComponent: 'ul',
     listItemComponent: 'li',
     placeholderComponent: 'li',
     sort: true,

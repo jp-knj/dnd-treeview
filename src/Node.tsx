@@ -22,7 +22,7 @@ export const Node = <T,>(props: Props): ReactElement | null => {
   const item = treeContext.tree.find(
     (node: any) => node.id === props.id
   ) as NodeModel<T>;
-  const { openIds, classes, enableAnimateExpand } = treeContext;
+  const { openIds, enableAnimateExpand } = treeContext;
   const open = openIds.includes(props.id);
 
   const [isDragging, drag, preview] = useDragNode(item, containerRef);
@@ -48,16 +48,6 @@ export const Node = <T,>(props: Props): ReactElement | null => {
 
   const Component = treeContext.listItemComponent;
 
-  let className = classes?.listItem || '';
-
-  if (isOver && classes?.dropTarget) {
-    className = `${className} ${classes.dropTarget}`;
-  }
-
-  if (isDragging && classes?.draggingSource) {
-    className = `${className} ${classes.draggingSource}`;
-  }
-
   const draggable = treeContext.canDrag ? treeContext.canDrag(props.id) : true;
   const isDropTarget = placeholderContext.dropTargetId === props.id;
   const children = treeContext.tree.filter(
@@ -77,7 +67,7 @@ export const Node = <T,>(props: Props): ReactElement | null => {
   };
 
   return (
-    <Component ref={containerRef} className={className} role="listitem">
+    <Component ref={containerRef} role="listitem">
       {treeContext.render(item, params)}
       {enableAnimateExpand && params.hasChild && (
         // <AnimateHeight isVisible={open}>

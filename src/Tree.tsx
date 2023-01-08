@@ -116,10 +116,9 @@ export const Container = <T,>(props: Props): ReactElement => {
 
   const className = useContainerClassName(props.parentId, isOver);
   const rootProps = treeContext.rootProps || {};
-  const Component = treeContext.listComponent;
 
   return (
-    <Component ref={ref} role="list" {...rootProps} className={className}>
+    <ul ref={ref} role="list" {...rootProps} className={className}>
       {view.map((node, index) => (
         <React.Fragment key={node.id}>
           <Placeholder
@@ -136,7 +135,7 @@ export const Container = <T,>(props: Props): ReactElement => {
         listCount={view.length}
         dropTargetId={props.parentId}
       />
-    </Component>
+    </ul>
   );
 };
 export const DragLayer = <T,>(): ReactElement | null => {

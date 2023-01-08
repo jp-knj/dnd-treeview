@@ -14,7 +14,6 @@ export const Placeholder = <T,>(props: Props): ReactElement | null => {
   const {
     placeholderRender,
     placeholderComponent: Component,
-    classes,
   } = useTreeContext<T>();
   const placeholderContext = useContext(PlaceholderContext);
   const manager = useDragDropManager();
@@ -36,7 +35,7 @@ export const Placeholder = <T,>(props: Props): ReactElement | null => {
   }
 
   return (
-    <Component className={classes?.placeholder || ''}>
+    <Component>
       {placeholderRender(dragSource, { depth: props.depth })}
     </Component>
   );
