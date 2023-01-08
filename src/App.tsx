@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getBackendOptions, MultiBackend } from '@minoru/react-dnd-treeview';
 import { Tree } from './Tree';
 import { NodeModel } from './Provider';
+import initialData from './initial-data.json';
 import { DndProvider } from 'react-dnd';
 
 export function App() {
@@ -17,12 +18,7 @@ export function App() {
           node: NodeModel<{ fileType: string; fileSize: string }>,
           { depth, isOpen, onToggle }: any
         ) => (
-          <Node
-            node={node}
-            depth={depth}
-            isOpen={isOpen}
-            onToggle={onToggle}
-          />
+          <Node node={node} depth={depth} isOpen={isOpen} onToggle={onToggle} />
         )}
         dragPreviewRender={(monitorProps: any) => (
           <></>
@@ -66,9 +62,7 @@ export const Node = ({
   };
 
   return (
-    <div
-      style={{ paddingInlineStart: indent }}
-    >
+    <div style={{ paddingInlineStart: indent }}>
       <div>{props.node.droppable && <div onClick={handleToggle}>→</div>}</div>
       <div></div>
       <div>{props.node.text}</div>
@@ -78,60 +72,3 @@ export const Node = ({
 export const Placeholder = (props: { node: NodeModel; depth: number }) => (
   <div style={{ left: props.depth * 24 }} data-testid="placeholder"></div>
 );
-
-const initialData = [
-  {
-    id: 1,
-    parent: 0,
-    droppable: true,
-    text: 'Folder 1',
-  },
-  {
-    id: 2,
-    parent: 1,
-    text: 'File 1-1',
-    data: {
-      fileType: 'csv',
-      fileSize: '0.5MB',
-    },
-  },
-  {
-    id: 3,
-    parent: 1,
-    text: 'File 1-2',
-    data: {
-      fileType: 'text',
-      fileSize: '4.8MB',
-    },
-  },
-  {
-    id: 4,
-    parent: 0,
-    droppable: true,
-    text: 'Folder 2',
-  },
-  {
-    id: 5,
-    parent: 4,
-    droppable: true,
-    text: 'Folder 2-1',
-  },
-  {
-    id: 6,
-    parent: 5,
-    text: 'File 2-1-1',
-    data: {
-      fileType: 'image',
-      fileSize: '2.1MB',
-    },
-  },
-  {
-    id: 7,
-    parent: 0,
-    text: 'File 3',
-    data: {
-      fileType: 'image',
-      fileSize: '0.8MB',
-    },
-  },
-];
