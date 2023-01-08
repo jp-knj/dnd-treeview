@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getBackendOptions, MultiBackend } from '@minoru/react-dnd-treeview';
-import { Tree } from './Tree';
+import { Tree, DragLayerMonitorProps } from './Tree';
 import { NodeModel } from './Provider';
 import initialData from './initial-data.json';
 import { DndProvider } from 'react-dnd';
@@ -21,8 +21,7 @@ export function App() {
           <Node node={node} depth={depth} isOpen={isOpen} onToggle={onToggle} />
         )}
         dragPreviewRender={(monitorProps: any) => (
-          <></>
-          // <CustomDragPreview monitorProps={monitorProps} />
+          <DragPreview monitorProps={monitorProps} />
         )}
         onDrop={handleDrop}
         classes={{}}
@@ -72,3 +71,15 @@ export const Node = ({
 export const Placeholder = (props: { node: NodeModel; depth: number }) => (
   <div style={{ left: props.depth * 24 }} data-testid="placeholder"></div>
 );
+
+type DragPreviewProps = {
+  monitorProps: DragLayerMonitorProps<{ fileType: string; fileSize: string }>;
+};
+export const DragPreview = (props: DragPreviewProps) => {
+  const item = props.monitorProps.item;
+  return (
+    <div>
+      <div>{item.text}</div>
+    </div>
+  );
+};
