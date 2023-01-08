@@ -29,8 +29,6 @@ export type TreeStateBase<T> = {
 
 export type TreeState<T> = TreeStateBase<T> & {
   extraAcceptTypes: string[];
-  listItemComponent: ElementType;
-  placeholderComponent: ElementType;
   sort: SortCallback<T> | boolean;
   insertDroppableFirst: boolean;
   enableAnimateExpand: boolean;
@@ -106,14 +104,14 @@ export const Providers = <T,>(props: Props<T>): ReactElement => (
 export const TreeContext = createContext({});
 
 export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
-  const [
-    openIds,
-    { handleToggle, handleOpen, handleClose },
-  ] = useOpenIdsHelper(props.tree, props.initialOpen);
+  const [openIds, { handleToggle, handleOpen, handleClose }] = useOpenIdsHelper(
+    props.tree,
+    props.initialOpen
+  );
 
   useImperativeHandle(props.treeRef, () => ({
     open: (targetIds: any) => handleOpen(targetIds, props.onChangeOpen),
-    close: (targetIds: any) => handleClose(targetIds, props.onChangeOpen)
+    close: (targetIds: any) => handleClose(targetIds, props.onChangeOpen),
   }));
 
   const monitor = useDragDropManager().getMonitor();
@@ -122,8 +120,6 @@ export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
 
   const value: TreeState<T> = {
     extraAcceptTypes: [],
-    listItemComponent: 'li',
-    placeholderComponent: 'li',
     sort: true,
     insertDroppableFirst: true,
     enableAnimateExpand: false,
@@ -462,8 +458,5 @@ export const useOpenIdsHelper = (
     }
   };
 
-  return [
-    openIds,
-    { handleToggle, handleOpen, handleClose },
-  ];
+  return [openIds, { handleToggle, handleOpen, handleClose }];
 };

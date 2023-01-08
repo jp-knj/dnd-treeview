@@ -17,7 +17,7 @@ type Props = {
 export const Node = <T,>(props: Props): ReactElement | null => {
   const treeContext = useTreeContext<T>();
   const placeholderContext = useContext(PlaceholderContext);
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLLIElement>(null);
   const handleRef = useRef<any>(null);
   const item = treeContext.tree.find(
     (node: any) => node.id === props.id
@@ -46,8 +46,6 @@ export const Node = <T,>(props: Props): ReactElement | null => {
 
   const handleToggle = () => treeContext.onToggle(item.id);
 
-  const Component = treeContext.listItemComponent;
-
   const draggable = treeContext.canDrag ? treeContext.canDrag(props.id) : true;
   const isDropTarget = placeholderContext.dropTargetId === props.id;
   const children = treeContext.tree.filter(
@@ -67,7 +65,7 @@ export const Node = <T,>(props: Props): ReactElement | null => {
   };
 
   return (
-    <Component ref={containerRef} role="listitem">
+    <li ref={containerRef} role="listitem">
       {treeContext.render(item, params)}
       {enableAnimateExpand && params.hasChild && (
         // <AnimateHeight isVisible={open}>
@@ -77,6 +75,6 @@ export const Node = <T,>(props: Props): ReactElement | null => {
       {!enableAnimateExpand && params.hasChild && open && (
         <Container parentId={props.id} depth={props.depth + 1} />
       )}
-    </Component>
+    </li>
   );
 };
