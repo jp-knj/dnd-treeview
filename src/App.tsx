@@ -4,6 +4,9 @@ import { Tree, DragLayerMonitorProps } from './Tree';
 import { NodeModel } from './Provider';
 import initialData from './initial-data.json';
 import { DndProvider } from 'react-dnd';
+import './app.css';
+import { Folder } from './Folder';
+import { File } from './File';
 
 export function App() {
   const [treeData, setTreeData] = useState(initialData);
@@ -51,8 +54,8 @@ export const Node = ({
   isOpen: boolean;
   onToggle: (id: NodeModel['id']) => void;
 }) => {
-  const { id, droppable, data } = props.node;
-  const indent = props.depth * 24;
+  const { droppable, data, text } = props.node;
+  const indent = props.depth * 40;
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -60,15 +63,22 @@ export const Node = ({
   };
 
   return (
-    <div style={{ paddingInlineStart: indent }}>
-      <div>{props.node.droppable && <div onClick={handleToggle}>→</div>}</div>
-      <div></div>
-      <div>{props.node.text}</div>
+    <div style={{ marginLeft: indent }}>
+      <div>
+        {droppable ? (
+          <button onClick={handleToggle}>
+            <Folder />
+          </button>
+        ) : (
+          <File />
+        )}
+      </div>
+      <p>{text}</p>
     </div>
   );
 };
 export const Placeholder = (props: { node: NodeModel; depth: number }) => (
-  <div style={{ left: props.depth * 24 }} data-testid="placeholder"></div>
+  <div style={{ marginLeft: props.depth * 40 , borderStyle: "dotted"}}>プレースホルダー!</div>
 );
 
 type DragPreviewProps = {
