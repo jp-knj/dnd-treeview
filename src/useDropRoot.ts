@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { RefObject, useContext } from 'react';
 import { useDrop, DragElementWrapper } from 'react-dnd';
 import { ItemTypes } from './Tree';
 import { isDroppable } from './isDroppable';
@@ -6,17 +6,12 @@ import { PlaceholderContext, NodeModel } from './Provider';
 import { getDropTarget } from './getDropTarget';
 import { useTreeContext } from './useTreeContext';
 
-export const isNodeModel = <T>(arg: any): arg is NodeModel<T> => {
-  return (
-    arg.id !== undefined && arg.parent !== undefined && arg.text !== undefined
-  );
-};
 export const useDropRoot = <T>(
-  ref: React.RefObject<HTMLElement>
-): [boolean, NodeModel, DragElementWrapper<HTMLElement>] => {
+  ref: RefObject<HTMLElement>
+): [NodeModel, DragElementWrapper<HTMLElement>] => {
   const treeContext = useTreeContext<T>();
   const placeholderContext = useContext(PlaceholderContext);
-  const [{ isOver, dragSource }, drop] = useDrop({
+  const [{ dragSource }, drop] = useDrop({
     accept: [ItemTypes.TREE_ITEM, ...treeContext.extraAcceptTypes],
     drop: (dragItem: any, monitor) => {
       const { rootId, onDrop } = treeContext;
@@ -91,5 +86,11 @@ export const useDropRoot = <T>(
     },
   });
 
-  return [isOver, dragSource, drop];
+  return [dragSource, drop];
+};
+
+export const isNodeModel = <T>(arg: any): arg is NodeModel<T> => {
+  return (
+    arg.id !== undefined && arg.parent !== undefined && arg.text !== undefined
+  );
 };
