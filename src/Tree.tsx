@@ -64,26 +64,8 @@ export const Container = <T,>(props: Props): ReactElement => {
     typeof treeContext.sort === 'function' ? treeContext.sort : compareItems;
 
   const nodes = treeContext.tree.filter((l) => l.parent === props.parentId);
-  let view = nodes;
-  if (treeContext.insertDroppableFirst) {
-    let droppableNodes = nodes.filter((n) => n.droppable);
-    let nonDroppableNodes = nodes.filter((n) => !n.droppable);
 
-    if (treeContext.sort === true) {
-      droppableNodes = droppableNodes.sort(sortCallback);
-      nonDroppableNodes = nonDroppableNodes.sort(sortCallback);
-      view = [...droppableNodes, ...nonDroppableNodes];
-    }
-
-    if (treeContext.sort === false) {
-      view = [...droppableNodes, ...nonDroppableNodes];
-    }
-
-  } else {
-    if (treeContext.sort !== false) {
-      view = nodes.sort(sortCallback);
-    }
-  }
+  const view = treeContext.sort !== false ? nodes.sort(sortCallback) : nodes;
 
   const [dragSource, drop] = useDropRoot(ref);
   if (

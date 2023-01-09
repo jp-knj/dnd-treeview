@@ -28,7 +28,7 @@ export function App() {
         )}
         onDrop={handleDrop}
         sort={false}
-        insertDroppableFirst={false}
+        // insertDroppableFirst={false}
         canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
           if (dragSource?.parent === dropTargetId) {
             return true;

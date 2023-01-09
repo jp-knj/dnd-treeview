@@ -28,7 +28,6 @@ export type TreeStateBase<T> = {
 export type TreeState<T> = TreeStateBase<T> & {
   extraAcceptTypes: string[];
   sort: SortCallback<T> | boolean;
-  insertDroppableFirst: boolean;
   dropTargetOffset: number;
   openIds: NodeModel['id'][];
   onDrop: any;
@@ -41,7 +40,6 @@ export type TreeProps<T = unknown> = TreeStateBase<T> & {
   extraAcceptTypes?: string[];
   sort?: SortCallback<T> | boolean;
   dropTargetOffset?: number
-  insertDroppableFirst?: boolean;
   initialOpen?: InitialOpen;
   onChangeOpen?: ChangeOpenHandler;
   onDrop: (tree: NodeModel<T>[], options: DropOptions<T>) => void;
@@ -104,7 +102,6 @@ export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
   const value: TreeState<T> = {
     extraAcceptTypes: [],
     sort: true,
-    insertDroppableFirst: true,
     dropTargetOffset: 10,
     ...props,
     openIds,
