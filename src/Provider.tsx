@@ -40,7 +40,6 @@ export type TreeProps<T = unknown> = TreeStateBase<T> & {
   extraAcceptTypes?: string[];
   sort?: SortCallback<T> | boolean;
   dropTargetOffset?: number
-  initialOpen?: InitialOpen;
   onChangeOpen?: ChangeOpenHandler;
   onDrop: (tree: NodeModel<T>[], options: DropOptions<T>) => void;
   canDrop?: (tree: NodeModel<T>[], options: DropOptions<T>) => boolean | void;
@@ -55,7 +54,6 @@ export type NodeModel<T = unknown> = {
   data?: T;
 };
 
-export type InitialOpen = boolean | NodeModel['id'][];
 export type SortCallback<T = unknown> = (
   a: NodeModel<T>,
   b: NodeModel<T>
