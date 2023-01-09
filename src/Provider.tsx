@@ -40,7 +40,8 @@ export type TreeState<T> = TreeStateBase<T> & {
 export type TreeProps<T = unknown> = TreeStateBase<T> & {
   extraAcceptTypes?: string[];
   sort?: SortCallback<T> | boolean;
-  dropTargetOffset?: number;
+  dropTargetOffset?: number
+  insertDroppableFirst?: boolean;
   initialOpen?: InitialOpen;
   onChangeOpen?: ChangeOpenHandler;
   onDrop: (tree: NodeModel<T>[], options: DropOptions<T>) => void;
