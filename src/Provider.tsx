@@ -1,14 +1,13 @@
 import React, {
-  useEffect,
-  useMemo,
   useState,
   PropsWithChildren,
   ReactElement,
-  useImperativeHandle,
   createContext,
 } from 'react';
 import { useDragDropManager } from 'react-dnd';
 import type { DragDropMonitor } from 'dnd-core';
+import { PlaceholderProvider } from "./PlaceholderProvider";
+import { useOpenIds } from './useOpenIds'
 
 export type TreeMethods = {
   open: any;
@@ -95,7 +94,7 @@ export const Providers = <T,>(props: Props<T>): ReactElement => (
 );
 
 export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
-  const [openIds, { handleToggle }] = useOpenIdsHelper();
+  const [openIds, { handleToggle }] = useOpenIds();
 
   const monitor = useDragDropManager().getMonitor();
   const canDropCallback = props.canDrop;
@@ -220,58 +219,7 @@ export const DragControlContext = createContext<DragControlState>(
   {} as DragControlState
 );
 
-export type PlaceholderState = {
-  dropTargetId: NodeModel['id'] | undefined;
-  index: number | undefined;
-  showPlaceholder: (parentId: NodeModel['id'], index: number) => void;
-  hidePlaceholder: () => void;
-};
 
-const initialPlaceholderState = {
-  dropTargetId: undefined,
-  index: undefined,
-};
-
-export const PlaceholderProvider: React.FC<{ children: React.ReactNode }> = (
-  props
-) => {
-  const [dropTargetId, setDropTargetId] = useState<
-    PlaceholderState['dropTargetId']
-  >(initialPlaceholderState.dropTargetId);
-  const [index, setIndex] = useState<PlaceholderState['index']>(
-    initialPlaceholderState.index
-  );
-
-  const showPlaceholder = (
-    dropTargetId: NodeModel['id'],
-    index: number
-  ): void => {
-    setDropTargetId(dropTargetId);
-    setIndex(index);
-  };
-
-  const hidePlaceholder = () => {
-    setDropTargetId(initialPlaceholderState.dropTargetId);
-    setIndex(initialPlaceholderState.index);
-  };
-
-  return (
-    <PlaceholderContext.Provider
-      value={{
-        dropTargetId,
-        index,
-        showPlaceholder,
-        hidePlaceholder,
-      }}
-    >
-      {props.children}
-    </PlaceholderContext.Provider>
-  );
-};
-
-export const PlaceholderContext = createContext<PlaceholderState>(
-  {} as PlaceholderState
-);
 export function mutateTree<T>(
   tree: NodeModel<T>[],
   dragSourceId: NodeModel['id'],
@@ -368,33 +316,3 @@ function getModifiedIndex(
 
   return [srcIndex, destIndex];
 }
-
-export const useOpenIdsHelper = (): [
-  NodeModel['id'][],
-  {
-    handleToggle: any;
-  }
-] => {
-  const initialOpenIds: NodeModel['id'][] = useMemo(() => {
-    if (Array.isArray([])) {
-      // 開いておくべき フォルダーid を返す
-      return [];
-    }
-    return [];
-  }, []);
-
-  const [openIds, setOpenIds] = useState<NodeModel['id'][]>(initialOpenIds);
-
-  const handleToggle = (targetId: NodeModel['id'], callback: any) => {
-    const newOpenIds = openIds.includes(targetId)
-      ? openIds.filter((id) => id !== targetId)
-      : [...openIds, targetId];
-    setOpenIds(newOpenIds);
-
-    if (callback) {
-      callback(newOpenIds);
-    }
-  };
-
-  return [openIds, { handleToggle }];
-};
