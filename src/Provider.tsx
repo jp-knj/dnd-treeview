@@ -31,7 +31,6 @@ export type TreeState<T> = TreeStateBase<T> & {
   sort: SortCallback<T> | boolean;
   insertDroppableFirst: boolean;
   dropTargetOffset: number;
-  initialOpen: InitialOpen;
   openIds: NodeModel['id'][];
   onDrop: any;
   canDrop?: any;
@@ -42,7 +41,6 @@ export type TreeState<T> = TreeStateBase<T> & {
 export type TreeProps<T = unknown> = TreeStateBase<T> & {
   extraAcceptTypes?: string[];
   sort?: SortCallback<T> | boolean;
-  insertDroppableFirst?: boolean;
   dropTargetOffset?: number;
   initialOpen?: InitialOpen;
   onChangeOpen?: ChangeOpenHandler;
@@ -96,12 +94,8 @@ export const Providers = <T,>(props: Props<T>): ReactElement => (
   </TreeProvider>
 );
 
-
 export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
-  const [openIds, { handleToggle }] = useOpenIdsHelper(
-    props.tree,
-    props.initialOpen
-  );
+  const [openIds, { handleToggle }] = useOpenIdsHelper();
 
   const monitor = useDragDropManager().getMonitor();
   const canDropCallback = props.canDrop;
@@ -111,8 +105,7 @@ export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
     extraAcceptTypes: [],
     sort: true,
     insertDroppableFirst: true,
-    dropTargetOffset: 0,
-    initialOpen: false,
+    dropTargetOffset: 10,
     ...props,
     openIds,
     onDrop: (dragSource: any, dropTargetId: any, placeholderIndex: any) => {
@@ -201,7 +194,6 @@ export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
 
 export const TreeContext = createContext({});
 
-
 const initialState = {
   isLock: false,
 };
@@ -234,7 +226,6 @@ export type PlaceholderState = {
   showPlaceholder: (parentId: NodeModel['id'], index: number) => void;
   hidePlaceholder: () => void;
 };
-
 
 const initialPlaceholderState = {
   dropTargetId: undefined,
@@ -378,29 +369,21 @@ function getModifiedIndex(
   return [srcIndex, destIndex];
 }
 
-export const useOpenIdsHelper = (
-  tree: NodeModel[],
-  initialOpen?: InitialOpen
-): [
+export const useOpenIdsHelper = (): [
   NodeModel['id'][],
   {
     handleToggle: any;
   }
 ] => {
-  let initialOpenIds: NodeModel['id'][] = useMemo(() => {
-    if (initialOpen === true) {
-      return (initialOpenIds = tree
-        .filter((node) => node.droppable)
-        .map((node) => node.id));
-    } else if (Array.isArray(initialOpen)) {
-      return initialOpen;
+  const initialOpenIds: NodeModel['id'][] = useMemo(() => {
+    if (Array.isArray([])) {
+      // 開いておくべき フォルダーid を返す
+      return [];
     }
     return [];
-  }, [initialOpen]);
+  }, []);
 
   const [openIds, setOpenIds] = useState<NodeModel['id'][]>(initialOpenIds);
-
-  useEffect(() => setOpenIds(initialOpenIds), [initialOpen]);
 
   const handleToggle = (targetId: NodeModel['id'], callback: any) => {
     const newOpenIds = openIds.includes(targetId)
