@@ -78,7 +78,7 @@ export const Node = ({
   );
 };
 export const Placeholder = (props: { node: NodeModel; depth: number }) => (
-  <div style={{ marginLeft: props.depth * 40 , borderStyle: "dotted"}}>プレースホルダー!</div>
+  <div style={{ marginLeft: props.depth * 40 , borderStyle: "dotted"}}>{props.node.text}</div>
 );
 
 type DragPreviewProps = {
