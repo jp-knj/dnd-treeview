@@ -7,7 +7,8 @@ import { useDragControl } from './useDragControl';
 import { useDragNode } from './useDragNode';
 import { useDropNode } from './useDropNode';
 import { useTreeContext } from './useTreeContext';
-import { PlaceholderContext, NodeModel } from './Provider';
+import { NodeModel } from './Provider';
+import { PlaceholderContext } from "./PlaceholderProvider";
 
 type Props = {
   id: NodeModel['id'];

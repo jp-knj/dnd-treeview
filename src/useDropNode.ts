@@ -2,7 +2,8 @@ import { useContext } from 'react';
 import { useDrop, DragElementWrapper } from 'react-dnd';
 import { ItemTypes } from './Tree';
 import { isDroppable } from './isDroppable';
-import { PlaceholderContext, NodeModel } from './Provider';
+import { NodeModel } from './Provider';
+import { PlaceholderContext } from "./PlaceholderProvider";
 import { getDropTarget } from './getDropTarget';
 import { useTreeContext } from './useTreeContext';
 

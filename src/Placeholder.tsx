@@ -1,7 +1,8 @@
 import React, { useContext, ReactElement } from 'react';
 import { useDragDropManager } from 'react-dnd';
 import { useTreeContext } from './useTreeContext';
-import { NodeModel, PlaceholderContext } from './Provider';
+import { NodeModel } from './Provider';
+import { PlaceholderContext } from "./PlaceholderProvider";
 
 type Props = {
   depth: number;
