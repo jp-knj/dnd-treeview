@@ -27,7 +27,7 @@ export const Node = (props: Props): ReactElement | null => {
   const open = openIds.includes(props.id);
 
   const [isDragging, drag, preview] = useDragNode(item, containerRef);
-  const [isOver, dragSource, drop] = useDropNode(item, containerRef);
+  const [dragSource, drop] = useDropNode(item, containerRef);
 
   useDragHandle(containerRef, handleRef, drag);
 

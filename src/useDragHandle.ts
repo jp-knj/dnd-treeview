@@ -3,7 +3,7 @@ import { DragElementWrapper, DragSourceOptions } from 'react-dnd';
 
 export const useDragHandle = (
   containerRef: RefObject<HTMLElement>,
-  handleRef: RefObject<any>,
+  handleRef: RefObject<HTMLElement>,
   drag: DragElementWrapper<DragSourceOptions>
 ) => {
   if (handleRef.current) {
