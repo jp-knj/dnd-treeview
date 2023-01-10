@@ -10,7 +10,6 @@ export const DragControlProvider: React.FC<{ children: React.ReactNode }> = (
   props
 ) => {
   const [isLock, setIsLock] = useState(initialState.isLock);
-
   return (
     <DragControlContext.Provider
       value={{
@@ -28,6 +27,6 @@ const initialState = {
   isLock: false,
 };
 
-export const DragControlContext= createContext<DragControlState>(
+export const DragControlContext = createContext<DragControlState>(
   {} as DragControlState
 );

@@ -1,7 +1,7 @@
-import React, { ReactElement } from "react";
-import { useTreeContext } from "./useTreeContext";
-import { useDragLayer } from "react-dnd";
-import { DragLayerMonitorProps, ItemTypes } from "./Tree";
+import React, { ReactElement } from 'react';
+import { useTreeContext } from './useTreeContext';
+import { useDragLayer } from 'react-dnd';
+import { DragLayerMonitorProps, ItemTypes } from './Tree';
 
 export const DragLayer = <T,>(): ReactElement | null => {
   const context = useTreeContext<T>();
@@ -20,7 +20,6 @@ export const DragLayer = <T,>(): ReactElement | null => {
     </div>
   );
 };
-
 
 function useTreeDragLayer<T>(): DragLayerMonitorProps<T> {
   return useDragLayer((monitor) => {

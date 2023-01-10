@@ -1,5 +1,5 @@
-import React, { createContext, useState } from "react";
-import { NodeModel } from "./Provider";
+import React, { createContext, useState } from 'react';
+import { NodeModel } from './Provider';
 
 export type PlaceholderState = {
   dropTargetId: NodeModel['id'] | undefined;
@@ -13,9 +13,7 @@ const initialPlaceholderState = {
   index: undefined,
 };
 
-export const PlaceholderProvider = (
-  props: { children: React.ReactNode}
-) => {
+export const PlaceholderProvider = (props: { children: React.ReactNode }) => {
   // Drop する対象の id
   // exmp: Foloer 5 にファイルを Drop する場合、 Folder 5 の id を保存
   const [dropTargetId, setDropTargetId] = useState<

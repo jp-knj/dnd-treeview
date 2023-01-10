@@ -53,5 +53,35 @@
       "fileType": "image",
       "fileSize": "0.8MB"
     }
+  },
+  {
+    "id": 8,
+    "parent": 0,
+    "text": "File 4",
+    "data": {
+      "fileType": "image",
+      "fileSize": "0.8MB"
+    }
+  },
+  {
+    "id": 9,
+    "parent": 0,
+    "droppable": true,
+    "text": "Folder 5"
+  },
+  {
+    "id": 10,
+    "parent": 9,
+    "droppable": true,
+    "text": "Folder 5-1"
+  },
+  {
+    "id": 11,
+    "parent": 10,
+    "text": "File 5-1-1",
+    "data": {
+      "fileType": "image",
+      "fileSize": "2.1MB"
+    }
   }
 ]

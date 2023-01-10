@@ -18,7 +18,7 @@ import { Placeholder } from './Placeholder';
 import { Node } from './Node';
 import { isDroppable } from './isDroppable';
 import { useTreeContext } from './useTreeContext';
-import { DragLayer } from "./DragLayer";
+import { DragLayer } from './DragLayer';
 
 export const ItemTypes = {
   TREE_ITEM: Symbol(),
@@ -33,7 +33,6 @@ export type DragLayerMonitorProps<T> = {
 export type DragItem<T> = NodeModel<T> & {
   ref: RefObject<HTMLElement>;
 };
-
 
 type Props = PropsWithChildren<{
   parentId: NodeModel['id'];
@@ -98,7 +97,6 @@ export const Container = <T,>(props: Props): ReactElement => {
     </ul>
   );
 };
-
 
 export const compareItems: SortCallback = (a, b) => {
   if (a.text > b.text) {

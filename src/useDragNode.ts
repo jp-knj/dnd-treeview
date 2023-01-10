@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { RefObject, useEffect } from 'react';
 import {
   useDrag,
   DragElementWrapper,
@@ -12,27 +12,9 @@ import { NodeModel } from './Provider';
 import { useTreeContext } from './useTreeContext';
 
 export type DragSourceElement = EventTarget | null;
-
-let dragSourceElement: DragSourceElement = null;
-
-const register = (e: DragEvent | TouchEvent): void => {
-  const { target } = e;
-
-  if (target instanceof HTMLElement) {
-    const source = target.closest('[role="listitem"]');
-
-    if (e.currentTarget === source) {
-      dragSourceElement = source;
-    }
-  }
-};
-
-const handleDragStart = (e: DragEvent) => register(e);
-const handleTouchStart = (e: TouchEvent) => register(e);
-
 export const useDragNode = <T>(
   item: NodeModel<T>,
-  ref: React.RefObject<HTMLElement>
+  ref: RefObject<HTMLElement>
 ): [
   boolean,
   DragElementWrapper<DragSourceOptions>,
@@ -66,6 +48,7 @@ export const useDragNode = <T>(
         treeContext.onDragStart(dragItem, monitor);
       }
 
+      console.log('onDragStart', dragItem);
       return dragItem;
     },
     end: (item, monitor) => {
@@ -73,6 +56,7 @@ export const useDragNode = <T>(
 
       if (treeContext.onDragEnd) {
         treeContext.onDragEnd(dragItem, monitor);
+        console.log('onDragEnd', dragItem);
       }
     },
     canDrag: () => {
@@ -95,3 +79,21 @@ export const useDragNode = <T>(
 
   return [isDragging, drag, preview];
 };
+
+let dragSourceElement: DragSourceElement = null;
+
+const register = (e: DragEvent | TouchEvent): void => {
+  const { target } = e;
+
+  if (target instanceof HTMLElement) {
+    const source = target.closest('[role="listitem"]');
+
+    if (e.currentTarget === source) {
+      dragSourceElement = source;
+      console.log('dragSourceElement', dragSourceElement);
+    }
+  }
+};
+
+const handleDragStart = (e: DragEvent) => register(e);
+const handleTouchStart = (e: TouchEvent) => register(e);

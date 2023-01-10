@@ -1,33 +1,31 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  NodeModel,
-} from "./Provider";
+import { useEffect, useMemo, useState } from 'react';
+import { NodeModel } from './Provider';
 
 export type ToggleHandler = (
-  id: NodeModel["id"],
+  id: NodeModel['id'],
   callback?: ChangeOpenHandler
 ) => void;
 
-export type ChangeOpenHandler = (newOpenIds: NodeModel["id"][]) => void;
+export type ChangeOpenHandler = (newOpenIds: NodeModel['id'][]) => void;
 
 export const useOpenIds = (): [
-  NodeModel["id"][],
+  NodeModel['id'][],
   {
     handleToggle: ToggleHandler;
   }
 ] => {
-  let initialOpenIds: NodeModel["id"][] = useMemo(() => {
+  const initialOpenIds: NodeModel['id'][] = useMemo(() => {
     if (Array.isArray([])) {
       return [];
     }
-    return []
-  },[]);
+    return [];
+  }, []);
 
-  const [openIds, setOpenIds] = useState<NodeModel["id"][]>(initialOpenIds);
+  const [openIds, setOpenIds] = useState<NodeModel['id'][]>(initialOpenIds);
 
-  useEffect(() => setOpenIds(initialOpenIds), [])
+  useEffect(() => setOpenIds(initialOpenIds), []);
 
-  const handleToggle: ToggleHandler = (targetId: NodeModel["id"], callback) => {
+  const handleToggle: ToggleHandler = (targetId: NodeModel['id'], callback) => {
     const newOpenIds = openIds.includes(targetId)
       ? openIds.filter((id) => id !== targetId)
       : [...openIds, targetId];
@@ -39,9 +37,5 @@ export const useOpenIds = (): [
     }
   };
 
-
-  return [
-    openIds,
-    { handleToggle },
-  ];
+  return [openIds, { handleToggle }];
 };
