@@ -8,21 +8,21 @@ import { useDragNode } from './useDragNode';
 import { useDropNode } from './useDropNode';
 import { useTreeContext } from './useTreeContext';
 import { NodeModel } from './Provider';
-import { PlaceholderContext } from "./PlaceholderProvider";
+import { PlaceholderContext } from './PlaceholderProvider';
 
 type Props = {
   id: NodeModel['id'];
   depth: number;
 };
 
-export const Node = <T,>(props: Props): ReactElement | null => {
-  const treeContext = useTreeContext<T>();
+export const Node = (props: Props): ReactElement | null => {
+  const treeContext = useTreeContext();
   const placeholderContext = useContext(PlaceholderContext);
   const containerRef = useRef<HTMLLIElement>(null);
-  const handleRef = useRef<any>(null);
+  const handleRef = useRef<HTMLElement>(null);
   const item = treeContext.tree.find(
-    (node: any) => node.id === props.id
-  ) as NodeModel<T>;
+    (node: { id: number | string }) => node.id === props.id
+  ) as NodeModel;
   const { openIds } = treeContext;
   const open = openIds.includes(props.id);
 
@@ -50,7 +50,7 @@ export const Node = <T,>(props: Props): ReactElement | null => {
   const draggable = treeContext.canDrag ? treeContext.canDrag(props.id) : true;
   const isDropTarget = placeholderContext.dropTargetId === props.id;
   const children = treeContext.tree.filter(
-    (node: any) => node.parent === props.id
+    (node: { parent: number | string }) => node.parent === props.id
   );
 
   const params: any = {
