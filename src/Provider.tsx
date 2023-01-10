@@ -6,8 +6,9 @@ import React, {
 } from 'react';
 import { useDragDropManager } from 'react-dnd';
 import type { DragDropMonitor } from 'dnd-core';
-import { PlaceholderProvider } from "./PlaceholderProvider";
-import { useOpenIds } from './useOpenIds'
+import { DragControlProvider } from './DragControlProvider';
+import { PlaceholderProvider } from './PlaceholderProvider';
+import { useOpenIds } from './useOpenIds';
 
 export type TreeMethods = {
   open: any;
@@ -39,7 +40,7 @@ export type TreeState<T> = TreeStateBase<T> & {
 export type TreeProps<T = unknown> = TreeStateBase<T> & {
   extraAcceptTypes?: string[];
   sort?: SortCallback<T> | boolean;
-  dropTargetOffset?: number
+  dropTargetOffset?: number;
   onChangeOpen?: ChangeOpenHandler;
   onDrop: (tree: NodeModel<T>[], options: DropOptions<T>) => void;
   canDrop?: (tree: NodeModel<T>[], options: DropOptions<T>) => boolean | void;
@@ -77,11 +78,6 @@ export type DropOptions<T = unknown> = {
   monitor: DragDropMonitor;
 };
 
-export type DragControlState = {
-  isLock: boolean;
-  lock: () => void;
-  unlock: () => void;
-};
 export const Providers = <T,>(props: Props<T>): ReactElement => (
   <TreeProvider {...props}>
     <DragControlProvider>
@@ -188,33 +184,6 @@ export const TreeProvider = <T,>(props: Props<T>): ReactElement => {
 };
 
 export const TreeContext = createContext({});
-
-const initialState = {
-  isLock: false,
-};
-
-export const DragControlProvider: React.FC<{ children: React.ReactNode }> = (
-  props
-) => {
-  const [isLock, setIsLock] = useState(initialState.isLock);
-
-  return (
-    <DragControlContext.Provider
-      value={{
-        isLock,
-        lock: () => setIsLock(true),
-        unlock: () => setIsLock(false),
-      }}
-    >
-      {props.children}
-    </DragControlContext.Provider>
-  );
-};
-
-export const DragControlContext = createContext<DragControlState>(
-  {} as DragControlState
-);
-
 
 export function mutateTree<T>(
   tree: NodeModel<T>[],
